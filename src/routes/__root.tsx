@@ -139,29 +139,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const router = useRouter();
 
-  // Meta Pixel on every page: one init + PageView on first load,
-  // then one PageView per in-app navigation (never twice for the same path).
+  // Meta Pixel: exactly one PageView per visit (autoConfig + SPA auto-tracking disabled).
   useEffect(() => {
-    let lastPath = window.location.pathname;
-    let ready = false;
     getJgPixelId()
-      .then(({ pixelId }) => {
-        if (!pixelId) return;
-        loadMetaPixel(pixelId);
-        lastPath = window.location.pathname;
-        ready = true;
-      })
+      .then(({ pixelId }) => { if (pixelId) loadMetaPixel(pixelId); })
       .catch(() => {});
-    const unsub = router.subscribe("onResolved", () => {
-      const path = window.location.pathname;
-      if (!ready || path === lastPath) return;
-      lastPath = path;
-      window.fbq?.("track", "PageView");
-    });
-    return () => unsub();
-  }, [router]);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
