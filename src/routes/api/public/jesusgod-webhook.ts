@@ -6,10 +6,10 @@ import { normalizeWhopPayload, sendMetaPurchase, sendUtmify, verifyWhopSignature
 const RENAMED = {
   subject: "Your Jesus God access is ready 🙏",
   items: [
-    ["Morning Psalms", "/membros/oracoes"],
-    ["Healing Sounds", "/membros/audios"],
-    ["Promise Verses", "/membros/versiculos"],
-    ["Faith Guide", "/membros/mentor"],
+    ["Daily Prayers", "/membros/oracoes"],
+    ["Blessing Audios", "/membros/audios"],
+    ["Scripture Declarations", "/membros/versiculos"],
+    ["Spiritual Mentor", "/membros/mentor"],
   ] as [string, string][],
 };
 
