@@ -169,7 +169,8 @@ export function buildUtmifyOrder(p: NormalizedPayment, status: "paid" | "refunde
     refundedAt: status === "refunded" ? fmt(new Date()) : null,
     customer: { name: p['name'] ?? "Cliente", email: p['email'] ?? "", phone: p['phone'] ?? null, document: null, ip: p['ip'] ?? "0.0.0.0" },
     products: [{ id: p.productId, name: p.productName, planId: p.planId ?? null, planName: null, quantity: 1, priceInCents: cents }],
-    trackingParameters: p.tracking,
+    // UTMify rejects the order unless every UTM key is present (string or null).
+    trackingParameters: Object.fromEntries(["src", "sck", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].map((k) => [k, (p.tracking as Record<string, string | null | undefined>)[k] ?? null])),
     commission: { totalPriceInCents: cents, gatewayFeeInCents: 0, userCommissionInCents: cents, currency: p['currency'] },
     isTest: false,
   };

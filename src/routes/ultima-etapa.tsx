@@ -6,8 +6,8 @@ import { LegalFooter } from "../components/Footer";
 
 export const Route = createFileRoute("/ultima-etapa")({
   validateSearch: (search: Record<string, unknown>): { nome?: string; liberar?: string } => ({
-    nome: typeof search["nome"] === "string" ? search["nome"] : "",
-    liberar: typeof search["liberar"] === "string" ? search["liberar"] : "",
+    nome: search["nome"] != null ? String(search["nome"]) : "",
+    liberar: search["liberar"] != null ? String(search["liberar"]) : "",
   }),
   component: UltimaEtapa,
 });
