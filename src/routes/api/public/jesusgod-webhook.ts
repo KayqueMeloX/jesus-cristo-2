@@ -13,6 +13,13 @@ const RENAMED = {
   ] as [string, string][],
 };
 
+// Upsell products: send an access confirmation for that product instead of the front-offer email.
+const UPSELLS: Record<string, string> = {
+  prod_0qe30ExIKHjm3: "90-Day Faith Activation Plan",
+  prod_HyGJwVi8seaSN: "Faith Daily Sanctuary App",
+  prod_NRKJPUsnK5tHJ: "The 7 Holy Seals — Family Prayer Study",
+};
+
 export const Route = createFileRoute("/api/public/jesusgod-webhook")({
   server: {
     handlers: {
@@ -45,7 +52,9 @@ export const Route = createFileRoute("/api/public/jesusgod-webhook")({
               lovableKey, brevoKey,
               senderEmail: process.env['BREVO_SENDER_EMAIL'] ?? "kaiquepm0403@gmail.com",
               senderName: process.env['BREVO_SENDER_NAME'] ?? "Jesus God",
-            }, RENAMED);
+            }, UPSELLS[p.productId]
+              ? { subject: `[Access Granted] ${UPSELLS[p.productId]} 🙏`, items: [[UPSELLS[p.productId] as string, "/membros"]] }
+              : RENAMED);
           }
           if (utmify) results['utmify'] = await sendUtmify(p, isPaid ? "paid" : "refunded", utmify);
         } catch (e) {
