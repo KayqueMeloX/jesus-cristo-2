@@ -10,17 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UltimaEtapaRouteImport } from './routes/ultima-etapa'
-import { Route as TermsRouteImport } from './routes/terms'
+import { Route as MembrosRouteImport } from './routes/membros'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundRouteImport } from './routes/refund'
 import { Route as SupportRouteImport } from './routes/support'
-import { Route as MembrosRouteImport } from './routes/membros'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as UltimaEtapaRouteImport } from './routes/ultima-etapa'
 import { Route as MembrosIndexRouteImport } from './routes/membros.index'
-import { Route as MembrosOracoesRouteImport } from './routes/membros.oracoes'
 import { Route as MembrosAudiosRouteImport } from './routes/membros.audios'
-import { Route as MembrosVersiculosRouteImport } from './routes/membros.versiculos'
 import { Route as MembrosMentorRouteImport } from './routes/membros.mentor'
+import { Route as MembrosOracoesRouteImport } from './routes/membros.oracoes'
+import { Route as MembrosVersiculosRouteImport } from './routes/membros.versiculos'
 import { Route as PaySlugRouteImport } from './routes/pay.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -28,78 +28,169 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-
-const UltimaEtapaRoute = UltimaEtapaRouteImport.update({
-  id: '/ultima-etapa',
-  path: '/ultima-etapa',
-  getParentRoute: () => rootRouteImport,
-} as any)
-
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-
-const RefundRoute = RefundRouteImport.update({
-  id: '/refund',
-  path: '/refund',
-  getParentRoute: () => rootRouteImport,
-} as any)
-
-const SupportRoute = SupportRouteImport.update({
-  id: '/support',
-  path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
-
 const MembrosRoute = MembrosRouteImport.update({
   id: '/membros',
   path: '/membros',
   getParentRoute: () => rootRouteImport,
 } as any)
-
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundRoute = RefundRouteImport.update({
+  id: '/refund',
+  path: '/refund',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UltimaEtapaRoute = UltimaEtapaRouteImport.update({
+  id: '/ultima-etapa',
+  path: '/ultima-etapa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MembrosIndexRoute = MembrosIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MembrosRoute,
 } as any)
-
-const MembrosOracoesRoute = MembrosOracoesRouteImport.update({
-  id: '/oracoes',
-  path: '/oracoes',
-  getParentRoute: () => MembrosRoute,
-} as any)
-
 const MembrosAudiosRoute = MembrosAudiosRouteImport.update({
   id: '/audios',
   path: '/audios',
   getParentRoute: () => MembrosRoute,
 } as any)
-
-const MembrosVersiculosRoute = MembrosVersiculosRouteImport.update({
-  id: '/versiculos',
-  path: '/versiculos',
-  getParentRoute: () => MembrosRoute,
-} as any)
-
 const MembrosMentorRoute = MembrosMentorRouteImport.update({
   id: '/mentor',
   path: '/mentor',
   getParentRoute: () => MembrosRoute,
 } as any)
-
+const MembrosOracoesRoute = MembrosOracoesRouteImport.update({
+  id: '/oracoes',
+  path: '/oracoes',
+  getParentRoute: () => MembrosRoute,
+} as any)
+const MembrosVersiculosRoute = MembrosVersiculosRouteImport.update({
+  id: '/versiculos',
+  path: '/versiculos',
+  getParentRoute: () => MembrosRoute,
+} as any)
 const PaySlugRoute = PaySlugRouteImport.update({
   id: '/pay/$slug',
   path: '/pay/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/membros': typeof MembrosRouteWithChildren
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
+  '/ultima-etapa': typeof UltimaEtapaRoute
+  '/membros/audios': typeof MembrosAudiosRoute
+  '/membros/mentor': typeof MembrosMentorRoute
+  '/membros/oracoes': typeof MembrosOracoesRoute
+  '/membros/versiculos': typeof MembrosVersiculosRoute
+  '/pay/$slug': typeof PaySlugRoute
+  '/membros/': typeof MembrosIndexRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
+  '/ultima-etapa': typeof UltimaEtapaRoute
+  '/membros/audios': typeof MembrosAudiosRoute
+  '/membros/mentor': typeof MembrosMentorRoute
+  '/membros/oracoes': typeof MembrosOracoesRoute
+  '/membros/versiculos': typeof MembrosVersiculosRoute
+  '/pay/$slug': typeof PaySlugRoute
+  '/membros': typeof MembrosIndexRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/membros': typeof MembrosRouteWithChildren
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
+  '/ultima-etapa': typeof UltimaEtapaRoute
+  '/membros/audios': typeof MembrosAudiosRoute
+  '/membros/mentor': typeof MembrosMentorRoute
+  '/membros/oracoes': typeof MembrosOracoesRoute
+  '/membros/versiculos': typeof MembrosVersiculosRoute
+  '/pay/$slug': typeof PaySlugRoute
+  '/membros/': typeof MembrosIndexRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/membros'
+    | '/privacy'
+    | '/refund'
+    | '/support'
+    | '/terms'
+    | '/ultima-etapa'
+    | '/membros/audios'
+    | '/membros/mentor'
+    | '/membros/oracoes'
+    | '/membros/versiculos'
+    | '/pay/$slug'
+    | '/membros/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/privacy'
+    | '/refund'
+    | '/support'
+    | '/terms'
+    | '/ultima-etapa'
+    | '/membros/audios'
+    | '/membros/mentor'
+    | '/membros/oracoes'
+    | '/membros/versiculos'
+    | '/pay/$slug'
+    | '/membros'
+  id:
+    | '__root__'
+    | '/'
+    | '/membros'
+    | '/privacy'
+    | '/refund'
+    | '/support'
+    | '/terms'
+    | '/ultima-etapa'
+    | '/membros/audios'
+    | '/membros/mentor'
+    | '/membros/oracoes'
+    | '/membros/versiculos'
+    | '/pay/$slug'
+    | '/membros/'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  MembrosRoute: typeof MembrosRouteWithChildren
+  PrivacyRoute: typeof PrivacyRoute
+  RefundRoute: typeof RefundRoute
+  SupportRoute: typeof SupportRoute
+  TermsRoute: typeof TermsRoute
+  UltimaEtapaRoute: typeof UltimaEtapaRoute
+  PaySlugRoute: typeof PaySlugRoute
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
@@ -110,18 +201,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ultima-etapa': {
-      id: '/ultima-etapa'
-      path: '/ultima-etapa'
-      fullPath: '/ultima-etapa'
-      preLoaderRoute: typeof UltimaEtapaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
+    '/membros': {
+      id: '/membros'
+      path: '/membros'
+      fullPath: '/membros'
+      preLoaderRoute: typeof MembrosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -145,18 +229,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pay/$slug': {
-      id: '/pay/$slug'
-      path: '/pay/$slug'
-      fullPath: '/pay/$slug'
-      preLoaderRoute: typeof PaySlugRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/membros': {
-      id: '/membros'
-      path: '/membros'
-      fullPath: '/membros'
-      preLoaderRoute: typeof MembrosRouteImport
+    '/ultima-etapa': {
+      id: '/ultima-etapa'
+      path: '/ultima-etapa'
+      fullPath: '/ultima-etapa'
+      preLoaderRoute: typeof UltimaEtapaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/membros/': {
@@ -164,84 +248,78 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/membros/'
       preLoaderRoute: typeof MembrosIndexRouteImport
-      parentRoute: typeof MembrosRouteImport
-    }
-    '/membros/oracoes': {
-      id: '/membros/oracoes'
-      path: '/oracoes'
-      fullPath: '/membros/oracoes'
-      preLoaderRoute: typeof MembrosOracoesRouteImport
-      parentRoute: typeof MembrosRouteImport
+      parentRoute: typeof MembrosRoute
     }
     '/membros/audios': {
       id: '/membros/audios'
       path: '/audios'
       fullPath: '/membros/audios'
       preLoaderRoute: typeof MembrosAudiosRouteImport
-      parentRoute: typeof MembrosRouteImport
-    }
-    '/membros/versiculos': {
-      id: '/membros/versiculos'
-      path: '/versiculos'
-      fullPath: '/membros/versiculos'
-      preLoaderRoute: typeof MembrosVersiculosRouteImport
-      parentRoute: typeof MembrosRouteImport
+      parentRoute: typeof MembrosRoute
     }
     '/membros/mentor': {
       id: '/membros/mentor'
       path: '/mentor'
       fullPath: '/membros/mentor'
       preLoaderRoute: typeof MembrosMentorRouteImport
-      parentRoute: typeof MembrosRouteImport
+      parentRoute: typeof MembrosRoute
+    }
+    '/membros/oracoes': {
+      id: '/membros/oracoes'
+      path: '/oracoes'
+      fullPath: '/membros/oracoes'
+      preLoaderRoute: typeof MembrosOracoesRouteImport
+      parentRoute: typeof MembrosRoute
+    }
+    '/membros/versiculos': {
+      id: '/membros/versiculos'
+      path: '/versiculos'
+      fullPath: '/membros/versiculos'
+      preLoaderRoute: typeof MembrosVersiculosRouteImport
+      parentRoute: typeof MembrosRoute
+    }
+    '/pay/$slug': {
+      id: '/pay/$slug'
+      path: '/pay/$slug'
+      fullPath: '/pay/$slug'
+      preLoaderRoute: typeof PaySlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
 interface MembrosRouteChildren {
-  MembrosIndexRoute: typeof MembrosIndexRoute
-  MembrosOracoesRoute: typeof MembrosOracoesRoute
   MembrosAudiosRoute: typeof MembrosAudiosRoute
-  MembrosVersiculosRoute: typeof MembrosVersiculosRoute
   MembrosMentorRoute: typeof MembrosMentorRoute
+  MembrosOracoesRoute: typeof MembrosOracoesRoute
+  MembrosVersiculosRoute: typeof MembrosVersiculosRoute
+  MembrosIndexRoute: typeof MembrosIndexRoute
 }
 
 const MembrosRouteChildren: MembrosRouteChildren = {
-  MembrosIndexRoute: MembrosIndexRoute,
-  MembrosOracoesRoute: MembrosOracoesRoute,
   MembrosAudiosRoute: MembrosAudiosRoute,
-  MembrosVersiculosRoute: MembrosVersiculosRoute,
   MembrosMentorRoute: MembrosMentorRoute,
+  MembrosOracoesRoute: MembrosOracoesRoute,
+  MembrosVersiculosRoute: MembrosVersiculosRoute,
+  MembrosIndexRoute: MembrosIndexRoute,
 }
 
-const MembrosRouteWithChildren = MembrosRoute._addFileChildren(
-  MembrosRouteChildren,
-)
-
-export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  UltimaEtapaRoute: typeof UltimaEtapaRoute
-  TermsRoute: typeof TermsRoute
-  PrivacyRoute: typeof PrivacyRoute
-  RefundRoute: typeof RefundRoute
-  SupportRoute: typeof SupportRoute
-  PaySlugRoute: typeof PaySlugRoute
-  MembrosRoute: typeof MembrosRouteWithChildren
-}
+const MembrosRouteWithChildren =
+  MembrosRoute._addFileChildren(MembrosRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  UltimaEtapaRoute: UltimaEtapaRoute,
-  TermsRoute: TermsRoute,
+  MembrosRoute: MembrosRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   RefundRoute: RefundRoute,
   SupportRoute: SupportRoute,
+  TermsRoute: TermsRoute,
+  UltimaEtapaRoute: UltimaEtapaRoute,
   PaySlugRoute: PaySlugRoute,
-  MembrosRoute: MembrosRouteWithChildren,
 }
-
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<any>()
+  ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
 import type { startInstance } from './start.ts'
