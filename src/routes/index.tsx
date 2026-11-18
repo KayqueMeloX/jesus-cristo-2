@@ -395,7 +395,7 @@ function QuizIndex() {
       voice.play().catch(() => setIsSpeaking(false));
     }
 
-    const bgm = new Audio(AUDIO_FILES.bgm);
+    const bgm = new Audio(AUDIO_FILES["bgm"]);
     bgm.loop = true;
     bgmAudioRef.current = bgm;
     bgm.play().catch(() => {});
@@ -451,7 +451,7 @@ function QuizIndex() {
   const revealClass = isSpeaking ? "reveal wait" : "reveal";
   const currentLoadingMsg =
     [...LOADING_STEPS].reverse().find(([threshold]) => loadProgress >= threshold)?.[1] ??
-    LOADING_STEPS[0][1];
+    (LOADING_STEPS[0]?.[1] ?? "");
   const isInputDisabled = isSpeaking || gateOpen;
   const displayName = name || "friend";
 

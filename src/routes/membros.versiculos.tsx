@@ -8,9 +8,9 @@ export const Route = createFileRoute("/membros/versiculos")({
 });
 
 function MembrosVersiculos() {
-  const [selectedAreaId, setSelectedAreaId] = useState(PRAYER_CATEGORIES[0].id);
+  const [selectedAreaId, setSelectedAreaId] = useState(PRAYER_CATEGORIES[0]?.id ?? "");
   const currentCategory =
-    PRAYER_CATEGORIES.find((cat) => cat.id === selectedAreaId) ?? PRAYER_CATEGORIES[0];
+    PRAYER_CATEGORIES.find((cat) => cat.id === selectedAreaId) ?? PRAYER_CATEGORIES[0]!;
 
   return (
     <div className="mb-wrap">
@@ -58,7 +58,7 @@ function MembrosVersiculos() {
                   marginTop: 4,
                 }}
               >
-                {cat.title.split("&")[0].trim()}
+                {(cat.title.split("&")[0] ?? "").trim()}
               </span>
             </button>
           );

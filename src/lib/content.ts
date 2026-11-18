@@ -258,5 +258,5 @@ export function getVerseOfTheDay(): Verse {
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 1000 / 60 / 60 / 24
   );
-  return DAILY_VERSES[dayOfYear % DAILY_VERSES.length] ?? DAILY_VERSES[0];
+  return DAILY_VERSES[dayOfYear % DAILY_VERSES.length] ?? (DAILY_VERSES[0] as Verse);
 }

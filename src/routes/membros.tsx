@@ -33,7 +33,7 @@ function LoginForm({ onLogin }: { onLogin: (session: MemberSession) => void }) {
     }
 
     setTimeout(() => {
-      const namePart = email.split("@")[0];
+      const namePart = email.split("@")[0] ?? "";
       const capitalized = namePart.charAt(0).toUpperCase() + namePart.slice(1);
       const session: MemberSession = {
         token: "tok_" + Date.now(),
