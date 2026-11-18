@@ -10,10 +10,12 @@ export const APP_URL = "https://jesusgod.lovable.app";
 const esc = (v: string) =>
   v.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ?? c);
 
-export function buildDeliveryEmail(p: Pick<NormalizedPayment, "name" | "productName">) {
+export interface EmailVariant { subject: string; items: [string, string][] }
+
+export function buildDeliveryEmail(p: Pick<NormalizedPayment, "name" | "productName">, variant?: EmailVariant) {
   const first = esc((p.name ?? "").split(" ")[0] || "friend");
   const access = `${APP_URL}/membros`;
-  const items: [string, string][] = [
+  const items: [string, string][] = variant ? variant.items.map(([t, path]) => [t, `${APP_URL}${path}`]) : [
     ["Daily Prayers", `${APP_URL}/membros/oracoes`],
     ["Blessing Audios", `${APP_URL}/membros/audios`],
     ["Scripture Declarations", `${APP_URL}/membros/versiculos`],
@@ -21,7 +23,7 @@ export function buildDeliveryEmail(p: Pick<NormalizedPayment, "name" | "productN
   ];
   const list = items.map(([t, u]) => `<li style="margin:6px 0"><a href="${u}" style="color:#8a6d1f">${t}</a></li>`).join("");
   return {
-    subject: "Your blessing is ready — access inside 🙏",
+    subject: variant?.subject ?? "Your blessing is ready — access inside 🙏",
     htmlContent: `<div style="font-family:Georgia,serif;max-width:560px;margin:auto;padding:24px;color:#2b2b2b">
 <h2 style="color:#8a6d1f">Welcome, ${first}!</h2>
 <p>Thank you for your seed of faith. Your purchase of <b>${esc(p.productName)}</b> is confirmed.</p>
@@ -35,9 +37,10 @@ export function buildDeliveryEmail(p: Pick<NormalizedPayment, "name" | "productN
 export async function sendDeliveryEmail(
   p: NormalizedPayment,
   env: { lovableKey: string; brevoKey: string; senderEmail: string; senderName: string },
+  variant?: EmailVariant,
 ): Promise<{ ok: boolean; status?: number; body?: string; skipped?: string }> {
   if (!p.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)) return { ok: true, skipped: "no valid email" };
-  const { subject, htmlContent } = buildDeliveryEmail(p);
+  const { subject, htmlContent } = buildDeliveryEmail(p, variant);
   const res = await fetch(`${GATEWAY_URL}/smtp/email`, {
     method: "POST",
     headers: {

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as JesusgodRouteImport } from './routes/jesusgod'
 import { Route as MembrosRouteImport } from './routes/membros'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundRouteImport } from './routes/refund'
@@ -22,11 +23,17 @@ import { Route as MembrosMentorRouteImport } from './routes/membros.mentor'
 import { Route as MembrosOracoesRouteImport } from './routes/membros.oracoes'
 import { Route as MembrosVersiculosRouteImport } from './routes/membros.versiculos'
 import { Route as PaySlugRouteImport } from './routes/pay.$slug'
+import { Route as ApiPublicJesusgodWebhookRouteImport } from './routes/api/public/jesusgod-webhook'
 import { Route as ApiPublicWhopWebhookRouteImport } from './routes/api/public/whop-webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JesusgodRoute = JesusgodRouteImport.update({
+  id: '/jesusgod',
+  path: '/jesusgod',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MembrosRoute = MembrosRouteImport.update({
@@ -89,6 +96,12 @@ const PaySlugRoute = PaySlugRouteImport.update({
   path: '/pay/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJesusgodWebhookRoute =
+  ApiPublicJesusgodWebhookRouteImport.update({
+    id: '/api/public/jesusgod-webhook',
+    path: '/api/public/jesusgod-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicWhopWebhookRoute = ApiPublicWhopWebhookRouteImport.update({
   id: '/api/public/whop-webhook',
   path: '/api/public/whop-webhook',
@@ -97,6 +110,7 @@ const ApiPublicWhopWebhookRoute = ApiPublicWhopWebhookRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/jesusgod': typeof JesusgodRoute
   '/membros': typeof MembrosRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
@@ -109,10 +123,12 @@ export interface FileRoutesByFullPath {
   '/membros/versiculos': typeof MembrosVersiculosRoute
   '/pay/$slug': typeof PaySlugRoute
   '/membros/': typeof MembrosIndexRoute
+  '/api/public/jesusgod-webhook': typeof ApiPublicJesusgodWebhookRoute
   '/api/public/whop-webhook': typeof ApiPublicWhopWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/jesusgod': typeof JesusgodRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/support': typeof SupportRoute
@@ -124,11 +140,13 @@ export interface FileRoutesByTo {
   '/membros/versiculos': typeof MembrosVersiculosRoute
   '/pay/$slug': typeof PaySlugRoute
   '/membros': typeof MembrosIndexRoute
+  '/api/public/jesusgod-webhook': typeof ApiPublicJesusgodWebhookRoute
   '/api/public/whop-webhook': typeof ApiPublicWhopWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/jesusgod': typeof JesusgodRoute
   '/membros': typeof MembrosRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
@@ -141,12 +159,14 @@ export interface FileRoutesById {
   '/membros/versiculos': typeof MembrosVersiculosRoute
   '/pay/$slug': typeof PaySlugRoute
   '/membros/': typeof MembrosIndexRoute
+  '/api/public/jesusgod-webhook': typeof ApiPublicJesusgodWebhookRoute
   '/api/public/whop-webhook': typeof ApiPublicWhopWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/jesusgod'
     | '/membros'
     | '/privacy'
     | '/refund'
@@ -159,10 +179,12 @@ export interface FileRouteTypes {
     | '/membros/versiculos'
     | '/pay/$slug'
     | '/membros/'
+    | '/api/public/jesusgod-webhook'
     | '/api/public/whop-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/jesusgod'
     | '/privacy'
     | '/refund'
     | '/support'
@@ -174,10 +196,12 @@ export interface FileRouteTypes {
     | '/membros/versiculos'
     | '/pay/$slug'
     | '/membros'
+    | '/api/public/jesusgod-webhook'
     | '/api/public/whop-webhook'
   id:
     | '__root__'
     | '/'
+    | '/jesusgod'
     | '/membros'
     | '/privacy'
     | '/refund'
@@ -190,11 +214,13 @@ export interface FileRouteTypes {
     | '/membros/versiculos'
     | '/pay/$slug'
     | '/membros/'
+    | '/api/public/jesusgod-webhook'
     | '/api/public/whop-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  JesusgodRoute: typeof JesusgodRoute
   MembrosRoute: typeof MembrosRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   RefundRoute: typeof RefundRoute
@@ -202,6 +228,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   UltimaEtapaRoute: typeof UltimaEtapaRoute
   PaySlugRoute: typeof PaySlugRoute
+  ApiPublicJesusgodWebhookRoute: typeof ApiPublicJesusgodWebhookRoute
   ApiPublicWhopWebhookRoute: typeof ApiPublicWhopWebhookRoute
 }
 
@@ -212,6 +239,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jesusgod': {
+      id: '/jesusgod'
+      path: '/jesusgod'
+      fullPath: '/jesusgod'
+      preLoaderRoute: typeof JesusgodRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/membros': {
@@ -298,6 +332,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jesusgod-webhook': {
+      id: '/api/public/jesusgod-webhook'
+      path: '/api/public/jesusgod-webhook'
+      fullPath: '/api/public/jesusgod-webhook'
+      preLoaderRoute: typeof ApiPublicJesusgodWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/whop-webhook': {
       id: '/api/public/whop-webhook'
       path: '/api/public/whop-webhook'
@@ -329,6 +370,7 @@ const MembrosRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  JesusgodRoute: JesusgodRoute,
   MembrosRoute: MembrosRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   RefundRoute: RefundRoute,
@@ -336,6 +378,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   UltimaEtapaRoute: UltimaEtapaRoute,
   PaySlugRoute: PaySlugRoute,
+  ApiPublicJesusgodWebhookRoute: ApiPublicJesusgodWebhookRoute,
   ApiPublicWhopWebhookRoute: ApiPublicWhopWebhookRoute,
 }
 export const routeTree = rootRouteImport
