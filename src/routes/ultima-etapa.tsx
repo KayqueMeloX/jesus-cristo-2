@@ -113,7 +113,13 @@ function OfferCards({ name }: { name: string }) {
   const seconds = String(timeLeft % 60).padStart(2, "0");
 
   const handleSelectOffer = (slug: string) => {
-    window.location.href = getPayRoute(slug, window.location.search);
+    const offer = OFFERS.find((o) => o.slug === slug);
+    const value = Number((offer?.label.match(/\$(\d+(?:\.\d+)?)/) ?? [])[1] ?? 0);
+    // One InitiateCheckout per click, unique eventID; Purchase is sent only by the server (CAPI).
+    window.fbq?.("track", "InitiateCheckout", { value, currency: "USD", content_ids: [slug], content_type: "product" }, { eventID: `ic_${slug}_${Date.now()}` });
+    const target = getPayRoute(slug, window.location.search);
+    // Small delay so the pixel request leaves before the page changes.
+    setTimeout(() => { window.location.href = target; }, 300);
   };
 
   return (

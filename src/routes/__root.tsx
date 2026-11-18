@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { loadMetaPixel } from "../lib/meta-pixel";
+import { getJgPixelId } from "../lib/jesusgod-checkout.functions";
 
 function NotFoundComponent() {
   return (
@@ -137,6 +139,29 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  // Meta Pixel on every page: one init + PageView on first load,
+  // then one PageView per in-app navigation (never twice for the same path).
+  useEffect(() => {
+    let lastPath = window.location.pathname;
+    let ready = false;
+    getJgPixelId()
+      .then(({ pixelId }) => {
+        if (!pixelId) return;
+        loadMetaPixel(pixelId);
+        lastPath = window.location.pathname;
+        ready = true;
+      })
+      .catch(() => {});
+    const unsub = router.subscribe("onResolved", () => {
+      const path = window.location.pathname;
+      if (!ready || path === lastPath) return;
+      lastPath = path;
+      window.fbq?.("track", "PageView");
+    });
+    return () => unsub();
+  }, [router]);
 
   return (
     <QueryClientProvider client={queryClient}>

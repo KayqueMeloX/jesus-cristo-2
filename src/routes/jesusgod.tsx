@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { JG_OFFERS } from "../lib/jesusgod-offers";
 import { useEffect, useState } from "react";
-import { createJgCheckout, getJgPixelId } from "../lib/jesusgod-checkout.functions";
-import { getCookie, getFbc, loadMetaPixel } from "../lib/meta-pixel";
+import { createJgCheckout } from "../lib/jesusgod-checkout.functions";
+import { getCookie, getFbc } from "../lib/meta-pixel";
 
 export const Route = createFileRoute("/jesusgod")({
   head: () => ({
@@ -21,7 +21,6 @@ export const Route = createFileRoute("/jesusgod")({
 function JesusGodPage() {
   const [busy, setBusy] = useState<string | null>(null);
   useEffect(() => {
-    getJgPixelId().then(({ pixelId }) => { if (pixelId) loadMetaPixel(pixelId); }).catch(() => {});
   }, []);
   const go = async (slug: string, href: string, price: string) => {
     if (busy) return;
