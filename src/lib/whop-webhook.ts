@@ -96,7 +96,9 @@ export function normalizeWhopPayload(payload: unknown): NormalizedPayment | null
     const n = Number(raw);
     return raw !== undefined && raw !== null && raw !== "" && Number.isFinite(n) ? n : undefined;
   };
-  const amount = money(d['usd_total']) ?? money(d['total']) ?? money(d['final_amount']) ?? money(d['subtotal']) ?? 0;
+  const charged = o(d['amount_charged']);
+  const li = (Array.isArray(d['line_items']) ? o((d['line_items'] as unknown[])[0]) : {}) as Obj;
+  const amount = money(d['amount_charged']) ?? money(d['usd_total']) ?? money(d['total']) ?? money(d['final_amount']) ?? money(d['subtotal']) ?? 0;
   const created = s(d['paid_at']) ?? s(d['created_at']);
   const createdAt = created ? new Date(/^\d+$/.test(created) ? Number(created) * 1000 : created) : new Date();
   const pick = (k: string) => s(meta[k]) ?? null;
@@ -104,7 +106,7 @@ export function normalizeWhopPayload(payload: unknown): NormalizedPayment | null
     event,
     paymentId,
     amount,
-    currency: (s(o(d['usd_total'])['currency']) ?? s(o(d['total'])['currency']) ?? s(d['currency']) ?? "usd").toUpperCase(),
+    currency: (s(charged['currency']) ?? s(o(d['usd_total'])['currency']) ?? s(o(d['total'])['currency']) ?? s(d['currency']) ?? "usd").toUpperCase(),
     email: s(user['email']) ?? s(member['email']) ?? s(d['email']) ?? s(d['customer_email']) ?? s(o(d['customer'])['email']) ?? s(billing['email']) ?? s(meta['email']),
     name: s(user['name']) ?? s(billing['name']) ?? s(user['username']),
     phone: s(member['phone']) ?? s(meta['phone']),
@@ -112,9 +114,9 @@ export function normalizeWhopPayload(payload: unknown): NormalizedPayment | null
     userAgent: s(meta['user_agent']),
     fbp: s(meta['fbp']),
     fbc: s(meta['fbc']),
-    productId: s(product['id']) ?? s(d['product_id']) ?? "product",
-    productName: s(product['title']) ?? s(product['name']) ?? "Produto",
-    planId: s(plan['id']) ?? s(d['plan_id']),
+    productId: s(product['id']) ?? s(li['product_id']) ?? s(d['product_id']) ?? "product",
+    productName: s(product['title']) ?? s(product['name']) ?? s(li['product_title']) ?? s(li['label']) ?? "Produto",
+    planId: s(plan['id']) ?? s(li['variant_id']) ?? s(d['plan_id']) ?? s(d['variant_id']),
     createdAt: isNaN(createdAt.getTime()) ? new Date() : createdAt,
     tracking: {
       src: pick("src"), sck: pick("sck"),
@@ -184,7 +186,7 @@ export function buildUtmifyOrder(p: NormalizedPayment, status: "paid" | "refunde
 export async function sendUtmify(p: NormalizedPayment, status: "paid" | "refunded", token: string) {
   const res = await fetch("https://api.utmify.com.br/api-credentials/orders", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "x-api-token": token },
+    headers: { "Content-Type": "application/json", "x-api-token": token, "User-Agent": "Mozilla/5.0 (compatible; JesusGodWebhook/1.0)" },
     body: JSON.stringify(buildUtmifyOrder(p, status)),
   });
   return { ok: res.ok, status: res.status, body: await res.text() };
