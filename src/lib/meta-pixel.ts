@@ -12,10 +12,6 @@ export function loadMetaPixel(pixelId: string): void {
   const s = document.createElement("script");
   s.async = true; s.src = "https://connect.facebook.net/en_US/fbevents.js";
   document.head.appendChild(s);
-  // Stop fbevents auto-firing PageView on every URL change (SPA) and auto events like SubscribedButtonClick.
-  (n as unknown as { disablePushState: boolean }).disablePushState = true;
-  (window as unknown as { __fbPvSent?: boolean }).__fbPvSent = true;
-  n("set", "autoConfig", false, pixelId);
   n("init", pixelId);
   n("track", "PageView");
 }

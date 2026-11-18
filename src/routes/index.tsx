@@ -316,6 +316,12 @@ function QuizIndex() {
   const redirectTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isNavigatingRef = useRef(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
+  // Refs keep the loading timer stable: re-renders must not restart it at 0%.
+  const loadStartRef = useRef<number | null>(null);
+  const navigateRef = useRef(navigate);
+  navigateRef.current = navigate;
+  const nameRef = useRef(name);
+  nameRef.current = name;
 
   const currentAudioKey = stage === "q" ? AUDIO_TRIGGERS[`q${questionIdx}`] : AUDIO_TRIGGERS[stage];
 
@@ -361,7 +367,8 @@ function QuizIndex() {
 
   useEffect(() => {
     if (stage !== "loading" || gateOpen) return;
-    const startTime = performance.now();
+    if (loadStartRef.current === null) loadStartRef.current = performance.now();
+    const startTime = loadStartRef.current;
     const interval = setInterval(() => {
       const duration = voiceAudioRef.current?.duration;
       const totalMs = duration && Number.isFinite(duration) ? duration * 1000 : 12000;
@@ -375,16 +382,16 @@ function QuizIndex() {
             sessionStorage.setItem(NAME_STORAGE_KEY, name);
           } catch {}
           const searchObj = Object.fromEntries(new URLSearchParams(window.location.search));
-          navigate({
+          navigateRef.current({
             to: "/ultima-etapa",
-            search: { ...searchObj, nome: name },
+            search: { ...searchObj, nome: nameRef.current },
           });
         }, 1200);
       }
     }, 160);
 
     return () => clearInterval(interval);
-  }, [stage, gateOpen, name, navigate]);
+  }, [stage, gateOpen]);
 
   const handleStart = () => {
     const voice = new Audio(currentAudioKey ? AUDIO_FILES[currentAudioKey] : undefined);
