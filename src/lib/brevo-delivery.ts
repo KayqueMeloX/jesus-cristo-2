@@ -10,7 +10,7 @@ export const APP_URL = "https://jesusgod.lovable.app";
 const esc = (v: string) =>
   v.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ?? c);
 
-export interface EmailVariant { subject: string; items: [string, string][] }
+export interface EmailVariant { subject: string; items: [string, string][]; attachment?: { url: string; name: string } }
 
 export function buildDeliveryEmail(p: Pick<NormalizedPayment, "name" | "productName">, variant?: EmailVariant) {
   const first = esc((p.name ?? "").split(" ")[0] || "friend");
@@ -54,6 +54,7 @@ export async function sendDeliveryEmail(
       subject,
       htmlContent,
       // Idempotency hint: same payment → same tag, visible in Brevo logs.
+      ...(variant?.attachment ? { attachment: [variant.attachment] } : {}),
       tags: ["delivery", `payment_${p.paymentId}`],
     }),
   });
