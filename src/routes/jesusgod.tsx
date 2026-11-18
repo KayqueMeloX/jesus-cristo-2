@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { JG_OFFERS } from "../lib/jesusgod-offers";
-import { buildCheckoutUrl } from "../lib/offer-config";
+import { useEffect, useState } from "react";
+import { createJgCheckout, getJgPixelId } from "../lib/jesusgod-checkout.functions";
+import { getCookie, getFbc, loadMetaPixel } from "../lib/meta-pixel";
 
 export const Route = createFileRoute("/jesusgod")({
   head: () => ({
@@ -17,9 +19,26 @@ export const Route = createFileRoute("/jesusgod")({
 });
 
 function JesusGodPage() {
-  const go = (href: string) => {
-    const url = buildCheckoutUrl(href, window.location.search);
-    if (url) window.location.href = url;
+  const [busy, setBusy] = useState<string | null>(null);
+  useEffect(() => {
+    getJgPixelId().then(({ pixelId }) => { if (pixelId) loadMetaPixel(pixelId); }).catch(() => {});
+  }, []);
+  const go = async (slug: string, href: string, price: string) => {
+    if (busy) return;
+    setBusy(slug);
+    const eventId = `ic_${slug}_${Date.now()}`;
+    window.fbq?.("track", "InitiateCheckout", { value: Number(price.replace(/[^0-9.]/g, "")), currency: "USD" }, { eventID: eventId });
+    const tracking: Record<string, string> = { event_id: eventId };
+    new URLSearchParams(window.location.search).forEach((v, k) => { tracking[k] = v; });
+    const fbp = getCookie("_fbp"); const fbc = getFbc();
+    if (fbp) tracking['fbp'] = fbp;
+    if (fbc) tracking['fbc'] = fbc;
+    try {
+      const { url } = await createJgCheckout({ data: { slug, tracking } });
+      window.location.href = url;
+    } catch {
+      window.location.href = href;
+    }
   };
   return (
     <main style={{ minHeight: "100vh", background: "#0a0f1e", color: "#fbf4df", fontFamily: "Georgia, serif", padding: "32px 16px" }}>
@@ -32,9 +51,9 @@ function JesusGodPage() {
             <img src={o.image} alt={o.name} width={400} height={400} loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 12 }} />
             <h2 style={{ fontSize: 20, margin: "12px 0 4px" }}>{o.name}</h2>
             <p style={{ fontSize: 26, color: "#f3c34e", margin: "0 0 12px", fontWeight: 700 }}>{o.price}</p>
-            <button type="button" disabled={!o.href} onClick={() => go(o.href)}
+            <button type="button" disabled={!o.href || busy !== null} onClick={() => void go(o.slug, o.href, o.price)}
               style={{ width: "100%", padding: "14px", borderRadius: 10, border: 0, background: o.href ? "#f3c34e" : "#555", color: "#0a0f1e", fontWeight: 700, fontSize: 16, cursor: o.href ? "pointer" : "not-allowed" }}>
-              {o.href ? "Buy now" : "Coming soon"}
+              {busy === o.slug ? "Opening checkout…" : o.href ? "Buy now" : "Coming soon"}
             </button>
             <p style={{ fontSize: 12, opacity: 0.7, marginTop: 8 }}> Pay · G Pay · Visa · Mastercard</p>
           </article>
