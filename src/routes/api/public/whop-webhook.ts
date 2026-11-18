@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { sendDeliveryEmail } from "@/lib/brevo-delivery";
 import { normalizeWhopPayload, sendMetaPurchase, sendUtmify, verifyWhopSignature } from "@/lib/whop-webhook";
 
 export const Route = createFileRoute("/api/public/whop-webhook")({
@@ -32,6 +33,15 @@ export const Route = createFileRoute("/api/public/whop-webhook")({
         try {
           if (isPaid && pixel && capi) {
             results['meta'] = await sendMetaPurchase(p, pixel, capi, process.env['META_TEST_EVENT_CODE']);
+          }
+          const lovableKey = process.env['LOVABLE_API_KEY'];
+          const brevoKey = process.env['BREVO_API_KEY'];
+          if (isPaid && lovableKey && brevoKey) {
+            results['email'] = await sendDeliveryEmail(p, {
+              lovableKey, brevoKey,
+              senderEmail: process.env['BREVO_SENDER_EMAIL'] ?? "kaiquepm0403@gmail.com",
+              senderName: process.env['BREVO_SENDER_NAME'] ?? "Jesus God",
+            });
           }
           if (utmify) results['utmify'] = await sendUtmify(p, isPaid ? "paid" : "refunded", utmify);
         } catch (e) {
