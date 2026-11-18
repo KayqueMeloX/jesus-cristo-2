@@ -6,7 +6,7 @@ export const Route = createFileRoute("/api/public/whop-webhook")({
     handlers: {
       GET: async () => Response.json({ ok: true, service: "whop-webhook" }),
       POST: async ({ request }) => {
-        const secret = process.env.WHOP_WEBHOOK_SECRET;
+        const secret = process.env['WHOP_WEBHOOK_SECRET'];
         if (!secret) return new Response("Webhook secret not configured", { status: 500 });
 
         const body = await request.text();
@@ -25,15 +25,15 @@ export const Route = createFileRoute("/api/public/whop-webhook")({
         if (!isPaid && !isRefund) return Response.json({ ok: true, ignored: p.event });
 
         const results: Record<string, unknown> = {};
-        const pixel = process.env.META_PIXEL_ID;
-        const capi = process.env.META_CAPI_TOKEN;
-        const utmify = process.env.UTMIFY_API_TOKEN;
+        const pixel = process.env['META_PIXEL_ID'];
+        const capi = process.env['META_CAPI_TOKEN'];
+        const utmify = process.env['UTMIFY_API_TOKEN'];
 
         try {
           if (isPaid && pixel && capi) {
-            results.meta = await sendMetaPurchase(p, pixel, capi, process.env.META_TEST_EVENT_CODE);
+            results['meta'] = await sendMetaPurchase(p, pixel, capi, process.env['META_TEST_EVENT_CODE']);
           }
-          if (utmify) results.utmify = await sendUtmify(p, isPaid ? "paid" : "refunded", utmify);
+          if (utmify) results['utmify'] = await sendUtmify(p, isPaid ? "paid" : "refunded", utmify);
         } catch (e) {
           console.error("[whop-webhook] forward failed", e);
           // 500 → Whop retries; event_id/orderId keep retries idempotent.

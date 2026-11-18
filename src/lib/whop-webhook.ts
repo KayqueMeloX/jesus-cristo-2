@@ -20,7 +20,7 @@ function safeEqual(a: string, b: string): boolean {
   for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return r === 0;
 }
-async function hmac(key: Uint8Array, msg: string): Promise<ArrayBuffer> {
+async function hmac(key: Uint8Array<ArrayBuffer>, msg: string): Promise<ArrayBuffer> {
   const k = await crypto.subtle.importKey("raw", key, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   return crypto.subtle.sign("HMAC", k, enc.encode(msg));
 }
@@ -33,12 +33,12 @@ export async function verifyWhopSignature(headers: Headers, body: string, secret
   if (id && ts && sig) {
     const age = Math.abs(Date.now() / 1000 - Number(ts));
     if (!Number.isFinite(age) || age > 600) return false;
-    const keys: Uint8Array[] = [enc.encode(secret)];
+    const keys: Uint8Array<ArrayBuffer>[] = [enc.encode(secret)];
     const raw = secret.startsWith("whsec_") ? secret.slice(6) : secret;
     try {
       keys.push(Uint8Array.from(atob(raw), (c) => c.charCodeAt(0)));
     } catch { /* not base64 */ }
-    const provided = sig.split(" ").map((p) => p.split(",")[1]).filter(Boolean);
+    const provided = sig.split(" ").map((p) => p.split(",")[1] ?? "").filter(Boolean);
     for (const key of keys) {
       const expected = bytesToB64(await hmac(key, `${id}.${ts}.${body}`));
       if (provided.some((p) => safeEqual(p, expected))) return true;
@@ -48,9 +48,9 @@ export async function verifyWhopSignature(headers: Headers, body: string, secret
   const legacy = headers.get("x-whop-signature");
   if (legacy) {
     const parts = Object.fromEntries(legacy.split(",").map((p) => p.trim().split("=") as [string, string]));
-    if (!parts.t || !parts.v1) return false;
-    const expected = bytesToHex(await hmac(enc.encode(secret), `${parts.t}.${body}`));
-    return safeEqual(parts.v1, expected);
+    if (!parts['t'] || !parts['v1']) return false;
+    const expected = bytesToHex(await hmac(enc.encode(secret), `${parts['t']}.${body}`));
+    return safeEqual(parts['v1'], expected);
   }
   return false;
 }
@@ -60,16 +60,16 @@ export interface NormalizedPayment {
   paymentId: string;
   amount: number; // major units
   currency: string;
-  email?: string;
-  name?: string;
-  phone?: string;
-  ip?: string;
-  userAgent?: string;
-  fbp?: string;
-  fbc?: string;
+  email?: string | undefined;
+  name?: string | undefined;
+  phone?: string | undefined;
+  ip?: string | undefined;
+  userAgent?: string | undefined;
+  fbp?: string | undefined;
+  fbc?: string | undefined;
   productId: string;
   productName: string;
-  planId?: string;
+  planId?: string | undefined;
   createdAt: Date;
   tracking: Record<"src" | "sck" | "utm_source" | "utm_medium" | "utm_campaign" | "utm_content" | "utm_term", string | null>;
 }
@@ -80,36 +80,36 @@ const s = (v: unknown): string | undefined => (typeof v === "string" && v.trim()
 
 export function normalizeWhopPayload(payload: unknown): NormalizedPayment | null {
   const p = o(payload);
-  const event = s(p.type) ?? s(p.action) ?? "";
-  const d = o(p.data);
-  const paymentId = s(d.id);
+  const event = s(p['type']) ?? s(p['action']) ?? "";
+  const d = o(p['data']);
+  const paymentId = s(d['id']);
   if (!event || !paymentId) return null;
-  const user = o(d.user);
-  const member = o(d.member);
-  const product = o(d.product);
-  const plan = o(d.plan);
-  const billing = o(d.billing_address);
-  const meta = { ...o(o(d.checkout_configuration).metadata), ...o(d.metadata) } as Obj;
-  const amountRaw = d.total ?? d.final_amount ?? d.subtotal ?? d.usd_total ?? 0;
+  const user = o(d['user']);
+  const member = o(d['member']);
+  const product = o(d['product']);
+  const plan = o(d['plan']);
+  const billing = o(d['billing_address']);
+  const meta = { ...o(o(d['checkout_configuration'])['metadata']), ...o(d['metadata']) } as Obj;
+  const amountRaw = d['total'] ?? d['final_amount'] ?? d['subtotal'] ?? d['usd_total'] ?? 0;
   const amount = Number(amountRaw) || 0;
-  const created = s(d.paid_at) ?? s(d.created_at);
+  const created = s(d['paid_at']) ?? s(d['created_at']);
   const createdAt = created ? new Date(/^\d+$/.test(created) ? Number(created) * 1000 : created) : new Date();
   const pick = (k: string) => s(meta[k]) ?? null;
   return {
     event,
     paymentId,
     amount,
-    currency: (s(d.currency) ?? "usd").toUpperCase(),
-    email: s(user.email) ?? s(member.email) ?? s(d.email),
-    name: s(user.name) ?? s(billing.name) ?? s(user.username),
-    phone: s(member.phone) ?? s(meta.phone),
-    ip: s(meta.client_ip) ?? s(meta.ip),
-    userAgent: s(meta.user_agent),
-    fbp: s(meta.fbp),
-    fbc: s(meta.fbc),
-    productId: s(product.id) ?? s(d.product_id) ?? "product",
-    productName: s(product.title) ?? s(product.name) ?? "Produto",
-    planId: s(plan.id) ?? s(d.plan_id),
+    currency: (s(d['currency']) ?? "usd").toUpperCase(),
+    email: s(user['email']) ?? s(member['email']) ?? s(d['email']),
+    name: s(user['name']) ?? s(billing['name']) ?? s(user['username']),
+    phone: s(member['phone']) ?? s(meta['phone']),
+    ip: s(meta['client_ip']) ?? s(meta['ip']),
+    userAgent: s(meta['user_agent']),
+    fbp: s(meta['fbp']),
+    fbc: s(meta['fbc']),
+    productId: s(product['id']) ?? s(d['product_id']) ?? "product",
+    productName: s(product['title']) ?? s(product['name']) ?? "Produto",
+    planId: s(plan['id']) ?? s(d['plan_id']),
     createdAt: isNaN(createdAt.getTime()) ? new Date() : createdAt,
     tracking: {
       src: pick("src"), sck: pick("sck"),
@@ -126,18 +126,18 @@ async function sha256(v: string): Promise<string> {
 /** Meta CAPI Purchase. event_id = Whop payment id → dedupes with browser pixel and retries. */
 export async function sendMetaPurchase(p: NormalizedPayment, pixelId: string, token: string, testCode?: string) {
   const user_data: Obj = {};
-  if (p.email) user_data.em = [await sha256(p.email)];
-  if (p.phone) user_data.ph = [await sha256(p.phone.replace(/\D/g, ""))];
-  if (p.name) {
-    const [fn, ...rest] = p.name.split(/\s+/);
-    user_data.fn = [await sha256(fn)];
-    if (rest.length) user_data.ln = [await sha256(rest.join(" "))];
+  if (p['email']) user_data['em'] = [await sha256(p['email'])];
+  if (p['phone']) user_data['ph'] = [await sha256(p['phone'].replace(/\D/g, ""))];
+  if (p['name']) {
+    const [fn, ...rest] = p['name'].split(/\s+/);
+    user_data['fn'] = [await sha256(fn ?? "")];
+    if (rest.length) user_data['ln'] = [await sha256(rest.join(" "))];
   }
-  user_data.external_id = [await sha256(p.email ?? p.paymentId)];
-  if (p.ip) user_data.client_ip_address = p.ip;
-  if (p.userAgent) user_data.client_user_agent = p.userAgent;
-  if (p.fbp) user_data.fbp = p.fbp;
-  if (p.fbc) user_data.fbc = p.fbc;
+  user_data['external_id'] = [await sha256(p['email'] ?? p.paymentId)];
+  if (p['ip']) user_data['client_ip_address'] = p['ip'];
+  if (p.userAgent) user_data['client_user_agent'] = p.userAgent;
+  if (p['fbp']) user_data['fbp'] = p['fbp'];
+  if (p['fbc']) user_data['fbc'] = p['fbc'];
   const body: Obj = {
     data: [{
       event_name: "Purchase",
@@ -145,10 +145,10 @@ export async function sendMetaPurchase(p: NormalizedPayment, pixelId: string, to
       event_id: p.paymentId,
       action_source: "website",
       user_data,
-      custom_data: { value: p.amount, currency: p.currency, content_ids: [p.productId], content_type: "product", order_id: p.paymentId },
+      custom_data: { value: p.amount, currency: p['currency'], content_ids: [p.productId], content_type: "product", order_id: p.paymentId },
     }],
   };
-  if (testCode) body.test_event_code = testCode;
+  if (testCode) body['test_event_code'] = testCode;
   const res = await fetch(`https://graph.facebook.com/v21.0/${pixelId}/events?access_token=${encodeURIComponent(token)}`, {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
   });
@@ -167,10 +167,10 @@ export function buildUtmifyOrder(p: NormalizedPayment, status: "paid" | "refunde
     createdAt: fmt(p.createdAt),
     approvedDate: fmt(p.createdAt),
     refundedAt: status === "refunded" ? fmt(new Date()) : null,
-    customer: { name: p.name ?? "Cliente", email: p.email ?? "", phone: p.phone ?? null, document: null, ip: p.ip ?? null },
+    customer: { name: p['name'] ?? "Cliente", email: p['email'] ?? "", phone: p['phone'] ?? null, document: null, ip: p['ip'] ?? null },
     products: [{ id: p.productId, name: p.productName, planId: p.planId ?? null, planName: null, quantity: 1, priceInCents: cents }],
     trackingParameters: p.tracking,
-    commission: { totalPriceInCents: cents, gatewayFeeInCents: 0, userCommissionInCents: cents, currency: p.currency },
+    commission: { totalPriceInCents: cents, gatewayFeeInCents: 0, userCommissionInCents: cents, currency: p['currency'] },
     isTest: false,
   };
 }
