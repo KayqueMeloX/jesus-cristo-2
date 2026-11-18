@@ -18,7 +18,7 @@ export const Route = createFileRoute("/api/public/jesusgod-webhook")({
     handlers: {
       GET: async () => Response.json({ ok: true, service: "jesusgod-webhook" }),
       POST: async ({ request }) => {
-        const secret = process.env['JG_WHOP_WEBHOOK_SECRET'];
+        const secret = process.env['JG_WHOP_WEBHOOK_SECRET'] || process.env['WHOP_WEBHOOK_SECRET'];
         if (!secret) return new Response("Webhook secret not configured", { status: 500 });
         const body = await request.text();
         if (!(await verifyWhopSignature(request.headers, body, secret))) {
@@ -33,9 +33,9 @@ export const Route = createFileRoute("/api/public/jesusgod-webhook")({
         if (!isPaid && !isRefund) return Response.json({ ok: true, ignored: p.event });
 
         const results: Record<string, unknown> = {};
-        const pixel = process.env['JG_META_PIXEL_ID'];
-        const capi = process.env['JG_META_CAPI_TOKEN'];
-        const utmify = process.env['JG_UTMIFY_API_TOKEN'];
+        const pixel = process.env['JG_META_PIXEL_ID'] || process.env['META_PIXEL_ID'];
+        const capi = process.env['JG_META_CAPI_TOKEN'] || process.env['META_CAPI_TOKEN'];
+        const utmify = process.env['JG_UTMIFY_API_TOKEN'] || process.env['UTMIFY_API_TOKEN'];
         try {
           if (isPaid && pixel && capi) results['meta'] = await sendMetaPurchase(p, pixel, capi, process.env['JG_META_TEST_EVENT_CODE']);
           const lovableKey = process.env['LOVABLE_API_KEY'];
