@@ -90,8 +90,13 @@ export function normalizeWhopPayload(payload: unknown): NormalizedPayment | null
   const plan = o(d['plan']);
   const billing = o(d['billing_address']);
   const meta = { ...o(o(d['checkout_configuration'])['metadata']), ...o(d['metadata']) } as Obj;
-  const amountRaw = d['total'] ?? d['final_amount'] ?? d['subtotal'] ?? d['usd_total'] ?? 0;
-  const amount = Number(amountRaw) || 0;
+  // Whop sends money either as plain numbers or as { amount: "33.21", currency } objects.
+  const money = (v: unknown): number | undefined => {
+    const raw = v && typeof v === "object" ? (v as Obj)['amount'] : v;
+    const n = Number(raw);
+    return raw !== undefined && raw !== null && raw !== "" && Number.isFinite(n) ? n : undefined;
+  };
+  const amount = money(d['usd_total']) ?? money(d['total']) ?? money(d['final_amount']) ?? money(d['subtotal']) ?? 0;
   const created = s(d['paid_at']) ?? s(d['created_at']);
   const createdAt = created ? new Date(/^\d+$/.test(created) ? Number(created) * 1000 : created) : new Date();
   const pick = (k: string) => s(meta[k]) ?? null;
@@ -99,7 +104,7 @@ export function normalizeWhopPayload(payload: unknown): NormalizedPayment | null
     event,
     paymentId,
     amount,
-    currency: (s(d['currency']) ?? "usd").toUpperCase(),
+    currency: (s(o(d['usd_total'])['currency']) ?? s(o(d['total'])['currency']) ?? s(d['currency']) ?? "usd").toUpperCase(),
     email: s(user['email']) ?? s(member['email']) ?? s(d['email']) ?? s(d['customer_email']) ?? s(o(d['customer'])['email']) ?? s(billing['email']) ?? s(meta['email']),
     name: s(user['name']) ?? s(billing['name']) ?? s(user['username']),
     phone: s(member['phone']) ?? s(meta['phone']),
