@@ -10,7 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as EntregavelRouteImport } from './routes/entregavel'
 import { Route as FaithActivationRouteImport } from './routes/faith-activation'
+import { Route as FaithAppRouteImport } from './routes/faith-app'
 import { Route as FaithJourneyRouteImport } from './routes/faith-journey'
 import { Route as FaithProtectionRouteImport } from './routes/faith-protection'
 import { Route as JesusgodRouteImport } from './routes/jesusgod'
@@ -34,9 +37,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntregavelRoute = EntregavelRouteImport.update({
+  id: '/entregavel',
+  path: '/entregavel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FaithActivationRoute = FaithActivationRouteImport.update({
   id: '/faith-activation',
   path: '/faith-activation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaithAppRoute = FaithAppRouteImport.update({
+  id: '/faith-app',
+  path: '/faith-app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaithJourneyRoute = FaithJourneyRouteImport.update({
@@ -128,7 +146,10 @@ const ApiPublicWhopWebhookRoute = ApiPublicWhopWebhookRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
+  '/entregavel': typeof EntregavelRoute
   '/faith-activation': typeof FaithActivationRoute
+  '/faith-app': typeof FaithAppRoute
   '/faith-journey': typeof FaithJourneyRoute
   '/faith-protection': typeof FaithProtectionRoute
   '/jesusgod': typeof JesusgodRoute
@@ -149,7 +170,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
+  '/entregavel': typeof EntregavelRoute
   '/faith-activation': typeof FaithActivationRoute
+  '/faith-app': typeof FaithAppRoute
   '/faith-journey': typeof FaithJourneyRoute
   '/faith-protection': typeof FaithProtectionRoute
   '/jesusgod': typeof JesusgodRoute
@@ -170,7 +194,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
+  '/entregavel': typeof EntregavelRoute
   '/faith-activation': typeof FaithActivationRoute
+  '/faith-app': typeof FaithAppRoute
   '/faith-journey': typeof FaithJourneyRoute
   '/faith-protection': typeof FaithProtectionRoute
   '/jesusgod': typeof JesusgodRoute
@@ -193,7 +220,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/app'
+    | '/entregavel'
     | '/faith-activation'
+    | '/faith-app'
     | '/faith-journey'
     | '/faith-protection'
     | '/jesusgod'
@@ -214,7 +244,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/app'
+    | '/entregavel'
     | '/faith-activation'
+    | '/faith-app'
     | '/faith-journey'
     | '/faith-protection'
     | '/jesusgod'
@@ -234,7 +267,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/app'
+    | '/entregavel'
     | '/faith-activation'
+    | '/faith-app'
     | '/faith-journey'
     | '/faith-protection'
     | '/jesusgod'
@@ -256,7 +292,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRoute
+  EntregavelRoute: typeof EntregavelRoute
   FaithActivationRoute: typeof FaithActivationRoute
+  FaithAppRoute: typeof FaithAppRoute
   FaithJourneyRoute: typeof FaithJourneyRoute
   FaithProtectionRoute: typeof FaithProtectionRoute
   JesusgodRoute: typeof JesusgodRoute
@@ -280,11 +319,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entregavel': {
+      id: '/entregavel'
+      path: '/entregavel'
+      fullPath: '/entregavel'
+      preLoaderRoute: typeof EntregavelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/faith-activation': {
       id: '/faith-activation'
       path: '/faith-activation'
       fullPath: '/faith-activation'
       preLoaderRoute: typeof FaithActivationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faith-app': {
+      id: '/faith-app'
+      path: '/faith-app'
+      fullPath: '/faith-app'
+      preLoaderRoute: typeof FaithAppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faith-journey': {
@@ -430,7 +490,10 @@ const MembrosRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRoute,
+  EntregavelRoute: EntregavelRoute,
   FaithActivationRoute: FaithActivationRoute,
+  FaithAppRoute: FaithAppRoute,
   FaithJourneyRoute: FaithJourneyRoute,
   FaithProtectionRoute: FaithProtectionRoute,
   JesusgodRoute: JesusgodRoute,

@@ -73,8 +73,8 @@ export const Route = createFileRoute("/api/public/jesusgod-webhook")({
           const up = UPSELLS[p.productId];
           const front = FRONT_PDF[p.planId ?? ""] ?? FRONT_PDF[p.productId] ?? FRONT_PDF['plan_ORvGcjoWSftUj']!;
           const variant = up
-            ? { subject: `[Access Granted] ${up[0]} — My Faith Sanctuary`, items: [[`Download: ${up[0]} (PDF)`, `/media/ebooks/${up[1]}`], ["Open your Members App", "/membros"]] as [string, string][], attachment: { url: pdfUrl(up[1]), name: up[1] } }
-            : { subject: `[Access Granted] Your ${front[0]} Sacred Prayers — My Faith Sanctuary`, items: [[`Download your ${front[0]} Prayers (PDF)`, `/media/ebooks/${front[1]}`], ["Open your Members App", "/membros"]] as [string, string][], attachment: { url: pdfUrl(front[1]), name: front[1] } };
+            ? { subject: `[Access Granted] ${up[0]} — My Faith Sanctuary`, items: [[`Download: ${up[0]} (PDF)`, `/media/ebooks/${up[1]}`], ["Open your Members App", "/faith-app?paid=true"]] as [string, string][], attachment: { url: pdfUrl(up[1]), name: up[1] } }
+            : { subject: `[Access Granted] Your ${front[0]} Sacred Prayers — My Faith Sanctuary`, items: [[`Download your ${front[0]} Prayers (PDF)`, `/media/ebooks/${front[1]}`], ["Open your Members App", "/faith-app?paid=true"]] as [string, string][], attachment: { url: pdfUrl(front[1]), name: front[1] } };
           results['email'] = await sendDeliveryEmail(p, {
             lovableKey, brevoKey,
             senderEmail: process.env['BREVO_SENDER_EMAIL'] ?? "kaiquepm0403@gmail.com",

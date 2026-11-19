@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html><html lang="en"><head>
+
+<style>
+#lovable-badge, #lovable-badge-cta {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+</style>
+
+<script>
+(function() {
+  try {
+    var p = location.pathname;
+    if (p.endsWith('.html') || p === '/app' || p === '/entregavel' || p === '/membros') {
+      history.replaceState(null, '', '/faith-app' + location.search + location.hash);
+    }
+  } catch(e) {}
+})();
+</script><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" data-precedence="default"/><link rel="stylesheet" href="/assets/styles-b_94Nbdu.css" data-precedence="default"/>
+
+<!-- UTMify Pixel & UTMs -->
+<script>
+  window.pixelId = "6aeba9286e9f16208dd93510";
+  var a = document.createElement("script");
+  a.setAttribute("async", "");
+  a.setAttribute("defer", "");
+  a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+  document.head.appendChild(a);
+</script>
+<script src="https://cdn.utmify.com.br/scripts/utms/latest.js" data-utmify-prevent-subids async defer></script>
+<!-- End UTMify -->
+<script>
+(function(){try{
+  var p=new URLSearchParams(location.search);
+  var raw=localStorage.getItem('faith_app_session');var s=raw?JSON.parse(raw):null;
+  if(!s||!s.email||/kaiquepm0403/i.test(s.email)){s={email:'member@faith-app.com',name:'Beloved Member',plan:'seed-100'};}
+  var amt=p.get('amt')||p.get('tier');if(amt){s.plan='seed-'+amt;try{localStorage.setItem('faith_selected_seed',amt);}catch(e){}}
+  localStorage.setItem('faith_app_session',JSON.stringify(s));
+  if(p.get('paid')==='true'){var sid=p.get('session_id')||'';var k='faith_purchase_sent_'+(sid||amt||'x');
+    if(!localStorage.getItem(k)){localStorage.setItem(k,'1');var v=Number(amt||localStorage.getItem('faith_selected_seed')||27);
+      var fire=function(){if(window.fbq){fbq('track','Purchase',{value:v,currency:'USD'},{eventID:sid||('pf_'+Date.now())});}else setTimeout(fire,300);};fire();}}
+}catch(e){}})();
+</script>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1108511222006100');
+fbq('track', 'PageView');
+(function(){
+  var _orig = window.fbq;
+  var allowed = '1108511222006100';
+  window.fbq = function(){
+    var args = Array.prototype.slice.call(arguments);
+    for (var i = 0; i < args.length; i++) {
+      if (String(args[i]).indexOf('1328178869180593') !== -1) {
+        return;
+      }
+    }
+    if (args[0] === 'init' && args[1] !== allowed) {
+      return;
+    }
+    if ((args[0] === 'trackSingle' || args[0] === 'trackSingleCustom') && args[1] !== allowed) {
+      return;
+    }
+    return _orig.apply(this, args);
+  };
+  for(var p in _orig){
+    if(Object.prototype.hasOwnProperty.call(_orig, p)){
+      window.fbq[p] = _orig[p];
+    }
+  }
+})();
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1108511222006100&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
+
+
+</body></html>

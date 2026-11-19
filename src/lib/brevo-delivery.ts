@@ -14,7 +14,7 @@ export interface EmailVariant { subject: string; items: [string, string][]; atta
 
 export function buildDeliveryEmail(p: Pick<NormalizedPayment, "name" | "productName">, variant?: EmailVariant) {
   const first = esc((p.name ?? "").split(" ")[0] || "friend");
-  const access = `${APP_URL}/membros`;
+  const access = `${APP_URL}/faith-app?paid=true`;
   const items: [string, string][] = variant ? variant.items.map(([t, path]) => [t, `${APP_URL}${path}`]) : [
     ["Daily Prayers", `${APP_URL}/membros/oracoes`],
     ["Blessing Audios", `${APP_URL}/membros/audios`],

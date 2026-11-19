@@ -25,7 +25,7 @@ export function rememberPurchase(search: string): void {
 
 /** Members area URL. */
 export function memberAppUrl(): string {
-  return "/membros";
+  return "/faith-app?paid=true";
 }
 
 /** Whop checkout URL for an upsell, forwarding UTMs (not purchase params) as Whop metadata. */
